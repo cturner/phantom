@@ -22,7 +22,7 @@ local function background()
   end
 
   -- play the battery % remaining every 15s
-  if time > bat_time + 1500 then
+  if ((time > bat_time + 1500) and bat_prcnt > 0) then
     playFile(SYS_SNDS .. "00" .. bat_prcnt .. ".wav")
     playFile(SYS_SNDS .. "0130.wav") -- percent
     bat_time = time
