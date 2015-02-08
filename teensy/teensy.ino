@@ -63,16 +63,15 @@ void error_P(const char* msg) {
 
 void initLogging() {
   if (logReady) return;
-  
-  SERIAL_PORT.println("calling sd.begin()"); 
+
   if (!sd.begin(chipSelect, SPI_FULL_SPEED)) sd.initErrorHalt();
    char fileName[13];
    uint8_t logNum = 0;
-   sprintf(fileName, "%02u%02u%2u%02u.log", NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
+   sprintf(fileName, "%02u%02u%02u%02u.log", NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
                                            NazaCanDecoder.getYear(), logNum);
                                              
    while (sd.exists(fileName)) {     
-     sprintf(fileName, "%02u%2u%2u%02u.log", NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
+     sprintf(fileName, "%02u%02u%02u%02u.log", NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
                                              NazaCanDecoder.getYear(), logNum);
      logNum++;
 
