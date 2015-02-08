@@ -70,17 +70,12 @@ void initLogging() {
    uint8_t logNum = 0;
    sprintf(fileName, "%02u%02u%2u%02u.log", NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
                                            NazaCanDecoder.getYear(), logNum);
-
-//  sprintf(fileName, "%02u%2u%2u%02u.log", 1, 18,
-//                                             15, logNum);
                                              
-   while (sd.exists(fileName)) {
-     SERIAL_PORT.print("checking "); SERIAL_PORT.println(fileName);
+   while (sd.exists(fileName)) {     
      sprintf(fileName, "%02u%2u%2u%02u.log", NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
                                              NazaCanDecoder.getYear(), logNum);
      logNum++;
-//     sprintf(fileName, "%02u%2u%2u%02u.log", 1, 18,
-//                                             15, logNum);
+
      // can't exceed 99 files per day, also prevent infinite loop in case something bad happens
      if (logNum > 99) {
        // reduce LED blink interval so we can tell something bad has happened
@@ -88,7 +83,11 @@ void initLogging() {
        return;
      }
    }
-   SERIAL_PORT.print("opening "); SERIAL_PORT.println(fileName);
+   
+   if (DEBUG) {
+     SERIAL_PORT.print("opening "); SERIAL_PORT.println(fileName);
+   }
+   
    if (!logFile.open(fileName, O_CREAT | O_WRITE | O_EXCL)) {
        led_interval = 1500; // blink LED faster so we know something bad happened
        return;
@@ -181,7 +180,7 @@ void loop() {
     }
   // }
  
-  if (DEBUG == true && (otherTime < currTime)) {
+  if (DEBUG && (otherTime < currTime)) {
     otherTime = currTime + 500;
     SERIAL_PORT.print("Lat: "); SERIAL_PORT.print(NazaCanDecoder.getLat(),7 );
     SERIAL_PORT.print(", Lon: "); SERIAL_PORT.print(NazaCanDecoder.getLon(), 7);
