@@ -22,7 +22,7 @@
 #define OSD_SERIAL Serial3
 #define DEBUG false
 #define LOG_WRITE_DELAY 250   // interval to write telemetry to SD card (ms)
-#define LOG_SYNC_DELAY  5000  // interval to flush to disk
+#define LOG_SYNC_DELAY  3000  // interval to flush to disk
 
 FrSkySportSensorGps gps;
 FrSkySportSensorFlvss flvss;
