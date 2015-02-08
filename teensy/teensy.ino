@@ -217,8 +217,8 @@ void loop() {
     sprintf(dateTime, "%4u.%02u.%02u %02u:%02u:%02u", 
             NazaCanDecoder.getYear() + 2000, NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
             NazaCanDecoder.getHour(), NazaCanDecoder.getMinute(), NazaCanDecoder.getSecond());
-    sprintf(buf, "%s,%d,%.5f,%.5f,%d,%d,%d,%d,%d", dateTime, currTime, NazaCanDecoder.getLat(), NazaCanDecoder.getLon(), 
-                                        (int32_t)NazaCanDecoder.getGpsAlt(),  (int32_t)NazaCanDecoder.getHeading(),
+    sprintf(buf, "%s,%d,%.5f,%.5f,%.5f,%d,%d,%d,%d", dateTime, currTime, NazaCanDecoder.getLat(), NazaCanDecoder.getLon(), 
+                                        NazaCanDecoder.getGpsAlt(),  (int32_t)NazaCanDecoder.getHeading(),
                                         (uint32_t)NazaCanDecoder.getSpeed(), NazaCanDecoder.getNumSat(), NazaCanDecoder.getBatteryPercent());
     logFile.println(buf);
     if (currTime> sdFlushTime) {
