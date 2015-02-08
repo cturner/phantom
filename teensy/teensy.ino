@@ -68,7 +68,7 @@ void initLogging() {
   if (!sd.begin(chipSelect, SPI_FULL_SPEED)) sd.initErrorHalt();
    char fileName[13];
    uint8_t logNum = 0;
-   sprintf(fileName, "%02u%2u%2u%02u.log", NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
+   sprintf(fileName, "%02u%02u%2u%02u.log", NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
                                            NazaCanDecoder.getYear(), logNum);
 
 //  sprintf(fileName, "%02u%2u%2u%02u.log", 1, 18,
@@ -239,10 +239,7 @@ void loop() {
               NazaCanDecoder.getHeading(),
               NazaCanDecoder.getYear(), NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
               NazaCanDecoder.getHour(), NazaCanDecoder.getMinute(), NazaCanDecoder.getSecond());
-  
-  // corrections required for default TARANIS display
-  // rpm.setData(NazaCanDecoder.getBatteryCharge(), ((NazaCanDecoder.getNumSat() - 35) / 2), ((NazaCanDecoder.getFixType() - 35) / 2));
-  
+    
   rpm.setData(NazaCanDecoder.getBatteryPercent(), NazaCanDecoder.getNumSat(), NazaCanDecoder.getFixType());
   vario.setData(NazaCanDecoder.getAlt(), NazaCanDecoder.getVsi());
   
