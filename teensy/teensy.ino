@@ -192,7 +192,6 @@ void loop() {
           NazaCanDecoder.getHour(), NazaCanDecoder.getMinute(), NazaCanDecoder.getSecond());
     SERIAL_PORT.print(", Date/Time: "); SERIAL_PORT.print(dateTime);
     SERIAL_PORT.print(", Bat: "); SERIAL_PORT.print(NazaCanDecoder.getBatteryPercent()); SERIAL_PORT.print("%");
-    SERIAL_PORT.print(", Bat Capacity: "); SERIAL_PORT.print(NazaCanDecoder.getBatteryCurrentCapacity());
     SERIAL_PORT.print(", Sats: "); SERIAL_PORT.println(NazaCanDecoder.getNumSat());
     
     sprintf(cell1Volts, "%.2f", (double)NazaCanDecoder.getBatteryCell(NazaCanDecoderLib::CELL_1) / 1000);
