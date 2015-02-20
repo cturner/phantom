@@ -20,7 +20,7 @@
 #include "FlexCAN.h"
 
 // Uncommnet to read smart battery data (if available) e.g. on Phantom controller
-//#define GET_SMART_BATTERY_DATA
+#define GET_SMART_BATTERY_DATA
 
 #define NAZA_MESSAGE_COUNT   3
 #define NAZA_MESSAGE_NONE    0x0000
@@ -79,6 +79,8 @@ class NazaCanDecoderLib
     uint8_t  getBatteryPercent(); // battery charge percentage (0-100%)
     uint16_t getBatteryCell(smartBatteryCell_t cell); // battery cell voltage in mV, use smartBatteryCell_t enum to index the table
 #endif
+    typedef enum { MOTOR_1 = 0, MOTOR_2 = 1, MOTOR_3 = 2, MOTOR_4 = 3 } motorOut_t;
+    uint16_t getMotorOut(motorOut_t motor); // motor output
 
   private:
     typedef struct __attribute__((packed))
@@ -260,6 +262,7 @@ class NazaCanDecoderLib
     uint8_t  batteryPercent; // smart battery charge percentage (0-100%)
     uint16_t batteryCell[3]; // smart battery cell voltage in mV, use smartBatteryCell_t enum to index the table
 #endif
+    uint16_t motorOut[3]; // motor output
 };
 
 extern NazaCanDecoderLib NazaCanDecoder;  // The NazaCanDecoder instance

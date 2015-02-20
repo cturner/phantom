@@ -68,6 +68,8 @@ uint8_t  NazaCanDecoderLib::getBatteryPercent() { return batteryPercent; }
 uint16_t NazaCanDecoderLib::getBatteryCell(NazaCanDecoderLib::smartBatteryCell_t cell) { return batteryCell[cell]; }
 #endif
 
+uint16_t NazaCanDecoderLib::getMotorOut(NazaCanDecoderLib::motorOut_t motor) { return motorOut[motor]; }
+
 uint16_t NazaCanDecoderLib::decode()
 {
   uint16_t msgId = NAZA_MESSAGE_NONE;
@@ -157,6 +159,10 @@ uint16_t NazaCanDecoderLib::decode()
           }
           else if(msgBuf[canMsgIdIdx].header.id == NAZA_MESSAGE_MSG1009)
           {
+            for(uint8_t j = 0; j < 4; j++)
+            {
+              motorOut[j] = msgBuf[canMsgIdIdx].msg1009.motorOut[j];
+            }
             for(uint8_t j = 0; j < 10; j++)
             {
               rcIn[j] = msgBuf[canMsgIdIdx].msg1009.rcIn[j];

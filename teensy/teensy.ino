@@ -91,7 +91,7 @@ void initLogging() {
        led_interval = 1500; // blink LED faster so we know something bad happened
        return;
    }
-   logFile.println("TIME, MILLIS, LATITUDE, LONGITUDE, ALTITUDE, HEADING, SPEED (kts), NUM_SATS, BATTERY_PERCENT");
+   logFile.println("TIME, MILLIS, LATITUDE, LONGITUDE, ALTITUDE, HEADING, SPEED (kts), NUM_SATS, BATTERY_PERCENT, MOTOR_1, MOTOR_2, MOTOR_3, MOTOR_4");
    logReady = true;
 }
 
@@ -216,9 +216,11 @@ void loop() {
     sprintf(dateTime, "%4u.%02u.%02u %02u:%02u:%02u", 
             NazaCanDecoder.getYear() + 2000, NazaCanDecoder.getMonth(), NazaCanDecoder.getDay(),
             NazaCanDecoder.getHour(), NazaCanDecoder.getMinute(), NazaCanDecoder.getSecond());
-    sprintf(buf, "%s,%d,%.5f,%.5f,%.5f,%d,%d,%d,%d", dateTime, currTime, NazaCanDecoder.getLat(), NazaCanDecoder.getLon(), 
+    sprintf(buf, "%s,%d,%.5f,%.5f,%.5f,%d,%d,%d,%d,%d,%d,%d,%d", dateTime, currTime, NazaCanDecoder.getLat(), NazaCanDecoder.getLon(), 
                                         NazaCanDecoder.getGpsAlt(),  (int32_t)NazaCanDecoder.getHeading(),
-                                        (uint32_t)NazaCanDecoder.getSpeed(), NazaCanDecoder.getNumSat(), NazaCanDecoder.getBatteryPercent());
+                                        (uint32_t)NazaCanDecoder.getSpeed(), NazaCanDecoder.getNumSat(), NazaCanDecoder.getBatteryPercent(),
+                                        NazaCanDecoder.getMotorOut(NazaCanDecoderLib::MOTOR_1), NazaCanDecoder.getMotorOut(NazaCanDecoderLib::MOTOR_2),
+                                        NazaCanDecoder.getMotorOut(NazaCanDecoderLib::MOTOR_3), NazaCanDecoder.getMotorOut(NazaCanDecoderLib::MOTOR_4));
     logFile.println(buf);
     if (currTime> sdFlushTime) {
       logFile.sync();
