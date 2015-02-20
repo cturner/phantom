@@ -1,16 +1,16 @@
 /*
   DJI Naza (v1/V2 + PMU, Phantom) CAN data decoder library
-  (c) Pawelsky 20150111
+  (c) Pawelsky 20150211
   Not for commercial use
 
-  Requires FlexCan library v0.1-beta (or newer if compatible)
-  https://github.com/teachop/FlexCAN_Library/releases/tag/v0.1-beta
+  Requires FlexCan library v1.0 (or newer if compatible)
+  https://github.com/teachop/FlexCAN_Library/releases/tag/v1.0
 
   Requires Teensy 3.1 board and CAN transceiver
   Complie with "CPU speed" set to "96MHz (overclock)"
   Refer to naza_can_decoder_wiring.jpg diagram for proper connection
-  Connections can be greatly simplified using CAN bus and MicroSD shields by Pawelsky
-  (see teensy_shields.jpg for installation and naza_can_decoder_wiring_shields.jpg for wiring)
+  Connections can be greatly simplified using CAN bus and MicroSD or AllInOne shields by Pawelsky
+  (see teensy_shields.jpg or teensy_aio_shield.jpg for installation and naza_can_decoder_wiring_shields.jpg or naza_can_decoder_wiring_aio_shield.jpg for wiring)
 */
 
 #ifndef __NAZA_CAN_DECODER_LIB_H__
@@ -20,7 +20,7 @@
 #include "FlexCAN.h"
 
 // Uncommnet to read smart battery data (if available) e.g. on Phantom controller
-#define GET_SMART_BATTERY_DATA
+//#define GET_SMART_BATTERY_DATA
 
 #define NAZA_MESSAGE_COUNT   3
 #define NAZA_MESSAGE_NONE    0x0000
@@ -63,7 +63,7 @@ class NazaCanDecoderLib
     double getHdop();       // Returns horizontal dilution of precision
     double getVdop();       // Returns vertical dilution of precision
     int8_t getPitch();       // Returns pitch in degrees
-    int8_t getRoll();        // Returns roll in degrees
+    int16_t getRoll();       // Returns roll in degrees
     uint8_t getYear();       // Returns year from GPS (minus 2000)
     uint8_t getMonth();      // Returns month from GPS
     uint8_t getDay();        // Returns day from GPS
@@ -77,7 +77,6 @@ class NazaCanDecoderLib
 #ifdef GET_SMART_BATTERY_DATA
     typedef enum { CELL_1 = 0, CELL_2 = 1, CELL_3 = 2, } smartBatteryCell_t;  // Smart battery cell index
     uint8_t  getBatteryPercent(); // battery charge percentage (0-100%)
-    uint16_t getBatteryCurrentCapacity();
     uint16_t getBatteryCell(smartBatteryCell_t cell); // battery cell voltage in mV, use smartBatteryCell_t enum to index the table
 #endif
 
@@ -101,17 +100,20 @@ class NazaCanDecoderLib
       float   gyrY;          // gyroscope Y axis data (??)
       float   gyrZ;          // gyroscope Z axis data (??)
       float   altBaro;       // altitude from barometric sensor (meters)
-      float   unk0[7];
+      float   headCompX;     // compensated heading X component
+      float   unk0[2];
+      float   headCompY;     // compensated heading Y component
+      float   unk1[3];
       float   northVelocity; // averaged northward velocity or 0 when less than 5 satellites locked (m/s)
       float   eastVelocity;  // averaged eastward velocity or 0 when less than 5 satellites locked (m/s)
       float   downVelocity;  // downward velocity (barometric) (m/s)
-      float   unk1[3];
+      float   unk2[3];
       int16_t  magCalX;       // calibrated magnetometer X axis data
       int16_t  magCalY;       // calibrated magnetometer Y axis data
       int16_t  magCalZ;       // calibrated magnetometer Y axis data
-      uint8_t  unk2[10];
+      uint8_t  unk3[10];
       uint8_t  numSat;        // number of locked satellites
-      uint8_t  unk3;
+      uint8_t  unk4;
       uint16_t seqNum;        // sequence number - increases with every message
     } naza_msg1002_t;
 
@@ -244,7 +246,7 @@ class NazaCanDecoderLib
     float pitchRad;   // pitch in radians 
     float rollRad;    // roll in radians
     int8_t pitch;      // pitch in degrees 
-    int8_t roll;       // roll in degrees 
+    int16_t roll;      // roll in degrees 
     uint8_t year;      // year (minus 2000)
     uint8_t month;
     uint8_t day;
@@ -256,7 +258,6 @@ class NazaCanDecoderLib
     mode_t mode;      // flight mode (see mode_t enum)
 #ifdef GET_SMART_BATTERY_DATA
     uint8_t  batteryPercent; // smart battery charge percentage (0-100%)
-    uint16_t batteryCurrentCapacity;
     uint16_t batteryCell[3]; // smart battery cell voltage in mV, use smartBatteryCell_t enum to index the table
 #endif
 };

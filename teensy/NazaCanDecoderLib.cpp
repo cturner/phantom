@@ -1,19 +1,16 @@
 /*
   DJI Naza (v1/V2 + PMU, Phantom) CAN data decoder library
-  (c) Pawelsky 20150111
+  (c) Pawelsky 20150211
   Not for commercial use
 
-  Requires FlexCan library v0.1-beta (or newer if compatible)
-  https://github.com/teachop/FlexCAN_Library/releases/tag/v0.1-beta
+  Requires FlexCan library v1.0 (or newer if compatible)
+  https://github.com/teachop/FlexCAN_Library/releases/tag/v1.0
 
   Requires Teensy 3.1 board and CAN transceiver
   Complie with "CPU speed" set to "96MHz (overclock)"
   Refer to naza_can_decoder_wiring.jpg diagram for proper connection
-  Connections can be greatly simplified using CAN bus and MicroSD shields by Pawelsky
-  (see teensy_shields.jpg for installation and naza_can_decoder_wiring_shields.jpg for wiring)
-
-  Heading tilt compensation based on LoveElectronics tutorial
-  https://www.loveelectronics.co.uk/Tutorials/13/tilt-compensated-compass-arduino-tutorial
+  Connections can be greatly simplified using CAN bus and MicroSD or AllInOne shields by Pawelsky
+  (see teensy_shields.jpg or teensy_aio_shield.jpg for installation and naza_can_decoder_wiring_shields.jpg or naza_can_decoder_wiring_aio_shield.jpg for wiring)
 */
 
 #include "NazaCanDecoderLib.h"
@@ -55,7 +52,7 @@ double NazaCanDecoderLib::getVsi() { return vsi; }
 double NazaCanDecoderLib::getGpsVsi() { return gpsVsi; }
 double NazaCanDecoderLib::getHdop() { return hdop; }
 double NazaCanDecoderLib::getVdop() { return vdop; }
-int8_t NazaCanDecoderLib::getRoll() { return roll; }
+int16_t NazaCanDecoderLib::getRoll() { return roll; }
 int8_t NazaCanDecoderLib::getPitch() { return pitch; }
 uint8_t NazaCanDecoderLib::getYear() { return year; }
 uint8_t NazaCanDecoderLib::getMonth() { return month; }
@@ -68,7 +65,6 @@ int16_t NazaCanDecoderLib::getRcIn(NazaCanDecoderLib::rcInChan_t chan) { return 
 NazaCanDecoderLib::mode_t NazaCanDecoderLib::getMode() { return mode; }
 #ifdef GET_SMART_BATTERY_DATA
 uint8_t  NazaCanDecoderLib::getBatteryPercent() { return batteryPercent; }
-uint16_t NazaCanDecoderLib::getBatteryCurrentCapacity() { return batteryCurrentCapacity; }
 uint16_t NazaCanDecoderLib::getBatteryCell(NazaCanDecoderLib::smartBatteryCell_t cell) { return batteryCell[cell]; }
 #endif
 
@@ -113,18 +109,13 @@ uint16_t NazaCanDecoderLib::decode()
         {
           if(msgBuf[canMsgIdIdx].header.id == NAZA_MESSAGE_MSG1002)
           {
-            float cosRoll = cos(rollRad);
-            float sinRoll = sin(rollRad);  
-            float cosPitch = cos(pitchRad);
-            float sinPitch = sin(pitchRad);
             float magCalX = msgBuf[canMsgIdIdx].msg1002.magCalX;
             float magCalY = msgBuf[canMsgIdIdx].msg1002.magCalY;
-            float magCalZ = msgBuf[canMsgIdIdx].msg1002.magCalZ;
-            float magCompX = magCalX * cosPitch + magCalZ * sinPitch;
-            float magCompY = magCalX * sinRoll * sinPitch + magCalY * cosRoll - magCalZ * sinRoll * cosPitch;
             headingNc = -atan2(magCalY, magCalX) / M_PI * 180.0;
             if(headingNc < 0) headingNc += 360.0;
-            heading = -atan2(magCompY, magCompX) / M_PI * 180.0;
+            float headCompX = msgBuf[canMsgIdIdx].msg1002.headCompX;
+            float headCompY = msgBuf[canMsgIdIdx].msg1002.headCompY;
+            heading = atan2(headCompY, headCompX) / M_PI * 180.0;
             if(heading < 0) heading += 360.0;
             sat = msgBuf[canMsgIdIdx].msg1002.numSat;
             gpsAlt = msgBuf[canMsgIdIdx].msg1002.altGps;
@@ -175,7 +166,7 @@ uint16_t NazaCanDecoderLib::decode()
 #endif
             rollRad = msgBuf[canMsgIdIdx].msg1009.roll;
             pitchRad = msgBuf[canMsgIdIdx].msg1009.pitch;
-            roll = (int8_t)(rollRad * 180.0 / M_PI);
+            roll = (int16_t)(rollRad * 180.0 / M_PI);
             pitch = (int8_t)(pitchRad * 180.0 / M_PI);
             mode = (NazaCanDecoderLib::mode_t)msgBuf[canMsgIdIdx].msg1009.flightMode;
             msgId = NAZA_MESSAGE_MSG1009;
